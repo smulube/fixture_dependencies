@@ -15,21 +15,38 @@ the following features:
 - Includes Rails and Sequel test helpers for Test::Unit (and a Sequel test
   helper for RSpec) that load fixtures for every test inside a transaction,
   so fixture data is never left in your database
+- Adds dynamic fixtures (similar to ActiveRecord) with ERb.
 
 == Installation
 
+Original version (lacking ERb support) available here:
+
   sudo gem install jeremyevans-fixture_dependencies \
     --source http://gems.github.com
-    
+
+This version available here:
+
+  sudo gem install smulube-fixture_dependencies \
+    --source http://gems.github.com
+
 == Source
 
-Source is available via github:
+Original source is available via github:
 
   http://github.com/jeremyevans/fixture_dependencies
 
 You can check it out with git:
 
   git clone git://github.com/jeremyevans/fixture_dependencies.git
+
+Patched version is also available via github:
+
+  http://github.com/smulube/fixture_dependencies
+
+You can check it out with git:
+
+  git clone git://github.com/smulube/fixture_dependencies.git
+
 
 == Usage
 
@@ -208,6 +225,23 @@ cyclic dependencies involving multiple model classes (employee belongs_to
 division belongs_to head_of_division when the employee is a member of the
 division and also the head of the division), even that approach is not
 possible.
+
+== Dynamic fixtures with ERb
+
+Adds support for ERb in the YAML fixtures, as is currently implemented in the 
+standard Rails fixtures.
+
+  <% for i in 1..100 %>
+  fixture_<%= i%>:
+    id: <%= i %>
+    name: guy_<%= i %>
+  <% end %>
+
+This will create 100 very simple YAML fixtures.
+
+Using ERb, you can also inject dynamic values into your fixtures with inserts 
+like <%= Date.today.strftime("%Y-%m-%d") %>. This is however a feature to be 
+used with some caution.
 
 == Known issues
 

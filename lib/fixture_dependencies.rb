@@ -56,7 +56,7 @@ end
 
 require 'fixture_dependencies/active_record' if defined?(ActiveRecord::Base)
 require 'fixture_dependencies/sequel' if defined?(Sequel::Model)
-  
+require 'erb'  
 
 class << FixtureDependencies
   attr_reader :fixtures, :loaded
@@ -82,7 +82,7 @@ class << FixtureDependencies
   # hash (does not add them to the database, see add).
   def load_yaml(model_name)
     raise(ArgumentError, "No fixture_path set. Use FixtureDependencies.fixture_path = ...") unless fixture_path
-    YAML.load(File.read(File.join(fixture_path, "#{model_name.camelize.constantize.table_name}.yml"))).each do |name, attributes|
+    YAML.load(erb_render(File.read(File.join(fixture_path, "#{model_name.camelize.constantize.table_name}.yml")))).each do |name, attributes|
       symbol_attrs = {}
       attributes.each{|k,v| symbol_attrs[k.to_sym] = v}
       add(model_name.to_sym, name, symbol_attrs)
@@ -111,6 +111,11 @@ class << FixtureDependencies
   # the individual fixture.
   def split_name(name)
     name.to_s.split('__', 2)
+  end
+
+  # run the loaded fixture through ERB before loading it.
+  def erb_render(fixture_content)
+    ERB.new(fixture_content).result
   end
   
   # Load the individual fixture into the database, by loading all necessary
