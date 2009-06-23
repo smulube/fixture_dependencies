@@ -7,6 +7,7 @@ rescue LoadError
 end
 
 CLEAN.include ["rdoc"]
+CLOBBER.include ["rdoc", "*.gem"]
 
 Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_dir = "rdoc"
